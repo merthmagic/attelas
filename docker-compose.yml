@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=attelas;Username=postgres;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - OPENAI_API_KEY=sk-1234567890abcdef1234567890abcdef # REPLACE WITH YOUR OPENAI KEY
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+  db:
+    image: bitnami/postgresql:latest
+    container_name: pg-container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      ALLOW_EMPTY_PASSWORD: yes
+      POSTGRES_DB: attelas
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+      
